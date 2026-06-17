@@ -1,8 +1,192 @@
 
+<style>
+/* ═══════════════════════════════════════════════════════
+   WORKOUT DAY CARDS
+═══════════════════════════════════════════════════════ */
+.day-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 1.25rem;
+}
+
+.day-card {
+  border: 1.5px solid var(--color-border-tertiary);
+  border-radius: 12px;
+  padding: 12px 8px 10px;
+  cursor: pointer;
+  background: var(--color-background-primary);
+  text-align: center;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color .18s ease, background .18s ease, transform .1s ease;
+}
+
+.day-card[data-day="A"] { --dc: #c94e30; }
+.day-card[data-day="B"] { --dc: #2d6fd4; }
+.day-card[data-day="C"] { --dc: #1e9e66; }
+
+.day-card:hover { opacity: .88; }
+.day-card:active { transform: scale(.96); }
+
+.day-card.on {
+  border-color: var(--dc);
+  background: color-mix(in srgb, var(--dc) 9%, var(--color-background-primary));
+}
+
+.dc-bar {
+  width: 24px; height: 3px;
+  border-radius: 2px;
+  background: var(--color-border-tertiary);
+  margin: 0 auto 8px;
+  transition: background .18s ease;
+}
+.day-card.on .dc-bar { background: var(--dc); }
+
+.dc-num {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin-bottom: 3px;
+  transition: color .18s ease;
+}
+.day-card.on .dc-num { color: var(--dc); }
+
+.dc-name {
+  font-size: 13px; font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.25;
+  margin-bottom: 2px;
+}
+
+.dc-sub {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  line-height: 1.3;
+}
+
+/* ═══════════════════════════════════════════════════════
+   QUICK EXERCISE CHIPS
+═══════════════════════════════════════════════════════ */
+#chips-wrap {
+  display: none;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+#chips-wrap.visible { display: block; }
+
+.chips-title {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-bottom: 7px;
+}
+
+.chips-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.xchip {
+  font-size: 12px;
+  padding: 4px 11px;
+  border-radius: 100px;
+  border: 1px solid var(--color-border-tertiary);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+  transition: border-color .12s ease, color .12s ease, background .12s ease;
+}
+.xchip:hover {
+  border-color: var(--xc);
+  color: var(--xc);
+  background: color-mix(in srgb, var(--xc) 8%, transparent);
+}
+.xchip:active { transform: scale(.95); }
+
+/* ═══════════════════════════════════════════════════════
+   DAY BADGE IN LOG
+═══════════════════════════════════════════════════════ */
+.dbadge {
+  display: inline-block;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 4px;
+  vertical-align: middle;
+}
+.dbadge-A { background: rgba(201,78,48,.13); color: #c94e30; }
+.dbadge-B { background: rgba(45,111,212,.13); color: #2d6fd4; }
+.dbadge-C { background: rgba(30,158,102,.13); color: #1e9e66; }
+
+/* ═══════════════════════════════════════════════════════
+   FILTER PILLS
+═══════════════════════════════════════════════════════ */
+.filter-pills-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 10px;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+.filter-pills-row::-webkit-scrollbar { display: none; }
+
+.fpill {
+  font-size: 12px;
+  padding: 4px 11px;
+  border-radius: 100px;
+  border: 1px solid var(--color-border-tertiary);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: inherit;
+  transition: border-color .12s ease, color .12s ease, background .12s ease;
+}
+.fpill.fa { border-color: #c94e30; color: #c94e30; background: rgba(201,78,48,.09); }
+.fpill.fb { border-color: #2d6fd4; color: #2d6fd4; background: rgba(45,111,212,.09); }
+.fpill.fc { border-color: #1e9e66; color: #1e9e66; background: rgba(30,158,102,.09); }
+
+/* ═══════════════════════════════════════════════════════
+   DATE GROUP HEADER
+═══════════════════════════════════════════════════════ */
+.date-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.date-label {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════ */
+@media (max-width: 400px) {
+  .dc-name { font-size: 12px; }
+  .dc-sub { font-size: 10px; }
+  .day-card { padding: 10px 4px 8px; }
+  .dc-bar { width: 20px; }
+}
+</style>
+
 <h2 class="sr-only">Трекер тренувань — запис вправ, ваги та повторень</h2>
 
 <div style="padding: 1rem 0;">
 
+<!-- Header -->
 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
   <div>
     <p style="font-size: 22px; font-weight: 500; margin: 0; color: var(--color-text-primary);">Трекер тренувань</p>
@@ -13,26 +197,81 @@
   </button>
 </div>
 
+<!-- Day Selector -->
+<p style="font-size: 12px; color: var(--color-text-secondary); margin: 0 0 8px; font-weight: 500;">Тип тренування</p>
+<div class="day-row" id="day-row">
+  <div class="day-card" data-day="A" onclick="selectDay('A')">
+    <div class="dc-bar"></div>
+    <div class="dc-num">День A</div>
+    <div class="dc-name">Груди</div>
+    <div class="dc-sub">Біцепс</div>
+  </div>
+  <div class="day-card" data-day="B" onclick="selectDay('B')">
+    <div class="dc-bar"></div>
+    <div class="dc-num">День B</div>
+    <div class="dc-name">Спина</div>
+    <div class="dc-sub">Тріцепс</div>
+  </div>
+  <div class="day-card" data-day="C" onclick="selectDay('C')">
+    <div class="dc-bar"></div>
+    <div class="dc-num">День C</div>
+    <div class="dc-name">Ноги</div>
+    <div class="dc-sub">Плечі</div>
+  </div>
+</div>
+
+<!-- Form Card -->
 <div style="background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
   <p style="font-size: 14px; font-weight: 500; margin: 0 0 12px; color: var(--color-text-primary);">Додати вправу</p>
+
+  <!-- Quick exercise chips -->
+  <div id="chips-wrap">
+    <div class="chips-title">Швидкий вибір:</div>
+    <div class="chips-list" id="chips-list"></div>
+  </div>
+
   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
     <div>
       <label style="font-size: 12px; color: var(--color-text-secondary); display: block; margin-bottom: 4px;">Вправа</label>
       <input type="text" id="exercise-input" placeholder="Жим лежачи..." list="exercise-list" style="width: 100%; box-sizing: border-box;" />
       <datalist id="exercise-list">
-        <option value="Жим лежачи">
-        <option value="Присідання">
-        <option value="Станова тяга">
-        <option value="Жим гантелей">
-        <option value="Тяга верхнього блоку">
-        <option value="Підтягування">
+        <option value="Жим лежачи зі штангою">
+        <option value="Жим гантелей лежачи">
+        <option value="Жим під кутом вгору">
+        <option value="Жим гантелей під кутом">
+        <option value="Розведення гантелей лежачи">
+        <option value="Кроссовер на блоці">
         <option value="Віджимання">
+        <option value="Підйом на біцепс зі штангою">
+        <option value="Підйом на біцепс з гантелями">
+        <option value="Молотки">
+        <option value="Сконцентровані згинання">
+        <option value="Підйом на блоці на біцепс">
+        <option value="Підтягування">
+        <option value="Тяга верхнього блоку">
+        <option value="Горизонтальна тяга">
         <option value="Тяга штанги в нахилі">
-        <option value="Армійський жим">
+        <option value="Тяга гантелі в нахилі">
+        <option value="Тяга Т-грифа">
+        <option value="Гіперекстензія">
+        <option value="Розгинання на блоці">
+        <option value="Французький жим">
+        <option value="Відтискання на брусах">
+        <option value="Жим вузьким хватом">
+        <option value="Розгинання з гантеллю за головою">
+        <option value="Присідання зі штангою">
+        <option value="Жим ногами">
         <option value="Розгинання ніг">
         <option value="Згинання ніг">
-        <option value="Підйом на біцепс">
-        <option value="Розгинання на трицепс">
+        <option value="Випади">
+        <option value="Ікри стоячи">
+        <option value="Ікри сидячи">
+        <option value="Армійський жим">
+        <option value="Жим гантелей сидячи">
+        <option value="Розведення гантелей стоячи">
+        <option value="Тяга до підборіддя">
+        <option value="Підйом гантелей в сторони">
+        <option value="Підйом гантелей перед собою">
         <option value="Планка">
         <option value="Скручування">
       </datalist>
@@ -66,6 +305,7 @@
   </div>
 </div>
 
+<!-- Stats -->
 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.5rem;">
   <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem; text-align: center;">
     <p style="font-size: 12px; color: var(--color-text-secondary); margin: 0 0 4px;">Підходів сьогодні</p>
@@ -81,12 +321,20 @@
   </div>
 </div>
 
-<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+<!-- Log Header + Date filter -->
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
   <p style="font-size: 14px; font-weight: 500; margin: 0; color: var(--color-text-primary);">Журнал</p>
   <div style="display: flex; gap: 8px; align-items: center;">
-    <input type="date" id="filter-date" style="font-size: 13px; padding: 4px 8px;" oninput="renderLog()" />
+    <input type="date" id="filter-date" style="font-size: 13px; padding: 4px 8px;" oninput="onDateFilter()" />
     <button onclick="clearFilter()" style="font-size: 12px; padding: 4px 10px;">Всі</button>
   </div>
+</div>
+
+<!-- Day filter pills (horizontal scroll on mobile) -->
+<div class="filter-pills-row">
+  <button class="fpill" id="fpill-A" onclick="toggleDayFilter('A')">День A · Груди + Біцепс</button>
+  <button class="fpill" id="fpill-B" onclick="toggleDayFilter('B')">День B · Спина + Тріцепс</button>
+  <button class="fpill" id="fpill-C" onclick="toggleDayFilter('C')">День C · Ноги + Плечі</button>
 </div>
 
 <div id="log-container">
@@ -96,12 +344,127 @@
 </div>
 
 <script>
+// ── Exercise data per day ────────────────────────────────────────
+const DAY_DATA = {
+  A: {
+    label: 'День A',
+    name: 'Груди + Біцепс',
+    color: '#c94e30',
+    exercises: [
+      'Жим лежачи зі штангою',
+      'Жим гантелей лежачи',
+      'Жим під кутом вгору',
+      'Жим гантелей під кутом',
+      'Розведення гантелей лежачи',
+      'Кроссовер на блоці',
+      'Підйом на біцепс зі штангою',
+      'Підйом на біцепс з гантелями',
+      'Молотки',
+      'Сконцентровані згинання',
+    ]
+  },
+  B: {
+    label: 'День B',
+    name: 'Спина + Тріцепс',
+    color: '#2d6fd4',
+    exercises: [
+      'Підтягування',
+      'Тяга верхнього блоку',
+      'Горизонтальна тяга',
+      'Тяга штанги в нахилі',
+      'Тяга гантелі в нахилі',
+      'Тяга Т-грифа',
+      'Гіперекстензія',
+      'Розгинання на блоці',
+      'Французький жим',
+      'Відтискання на брусах',
+      'Жим вузьким хватом',
+    ]
+  },
+  C: {
+    label: 'День C',
+    name: 'Ноги + Плечі',
+    color: '#1e9e66',
+    exercises: [
+      'Присідання зі штангою',
+      'Жим ногами',
+      'Розгинання ніг',
+      'Згинання ніг',
+      'Випади',
+      'Ікри стоячи',
+      'Армійський жим',
+      'Жим гантелей сидячи',
+      'Розведення гантелей стоячи',
+      'Тяга до підборіддя',
+      'Підйом гантелей в сторони',
+    ]
+  }
+};
+
+// ── Init ─────────────────────────────────────────────────────────
 const today = new Date().toISOString().split('T')[0];
 document.getElementById('date-input').value = today;
-document.getElementById('current-date').textContent = new Date().toLocaleDateString('uk-UA', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+document.getElementById('current-date').textContent = new Date().toLocaleDateString('uk-UA', {
+  weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+});
 
 let entries = JSON.parse(localStorage.getItem('gym-tracker') || '[]');
+let selectedDay = null;
+let activeDayFilter = null;
 
+// ── Day card selection ────────────────────────────────────────────
+function selectDay(day) {
+  selectedDay = (selectedDay === day) ? null : day;
+
+  document.querySelectorAll('.day-card').forEach(card => {
+    card.classList.toggle('on', card.dataset.day === selectedDay);
+  });
+
+  const chipsWrap = document.getElementById('chips-wrap');
+  const chipsList = document.getElementById('chips-list');
+
+  if (selectedDay) {
+    const d = DAY_DATA[selectedDay];
+    chipsWrap.classList.add('visible');
+    chipsList.innerHTML = d.exercises.map(ex =>
+      `<button class="xchip" style="--xc:${d.color}" onclick="fillExercise(this)"
+        data-name="${ex.replace(/"/g, '&quot;')}">${ex}</button>`
+    ).join('');
+  } else {
+    chipsWrap.classList.remove('visible');
+    chipsList.innerHTML = '';
+  }
+}
+
+function fillExercise(btn) {
+  document.getElementById('exercise-input').value = btn.dataset.name;
+  document.getElementById('set-input').focus();
+}
+
+// ── Day filter ────────────────────────────────────────────────────
+function toggleDayFilter(day) {
+  activeDayFilter = (activeDayFilter === day) ? null : day;
+  if (activeDayFilter) document.getElementById('filter-date').value = '';
+
+  document.getElementById('fpill-A').className = 'fpill' + (activeDayFilter === 'A' ? ' fa' : '');
+  document.getElementById('fpill-B').className = 'fpill' + (activeDayFilter === 'B' ? ' fb' : '');
+  document.getElementById('fpill-C').className = 'fpill' + (activeDayFilter === 'C' ? ' fc' : '');
+
+  renderLog();
+}
+
+function onDateFilter() {
+  if (document.getElementById('filter-date').value) {
+    // clear day filter when date is picked
+    activeDayFilter = null;
+    document.getElementById('fpill-A').className = 'fpill';
+    document.getElementById('fpill-B').className = 'fpill';
+    document.getElementById('fpill-C').className = 'fpill';
+  }
+  renderLog();
+}
+
+// ── Core CRUD ─────────────────────────────────────────────────────
 function saveData() {
   localStorage.setItem('gym-tracker', JSON.stringify(entries));
 }
@@ -118,7 +481,14 @@ function addEntry() {
     return;
   }
 
-  entries.push({ id: Date.now(), exercise, date, set: set || 1, weight: weight || 0, reps });
+  entries.push({
+    id: Date.now(),
+    exercise, date,
+    set: set || 1,
+    weight: weight || 0,
+    reps,
+    dayType: selectedDay
+  });
   saveData();
   renderLog();
   updateStats();
@@ -148,9 +518,14 @@ function updateStats() {
   document.getElementById('stat-volume').textContent = Math.round(vol);
 }
 
+// ── Render log ────────────────────────────────────────────────────
 function renderLog() {
   const filterDate = document.getElementById('filter-date').value;
-  const filtered = filterDate ? entries.filter(e => e.date === filterDate) : entries;
+
+  let filtered = entries;
+  if (filterDate) filtered = filtered.filter(e => e.date === filterDate);
+  if (activeDayFilter) filtered = filtered.filter(e => e.dayType === activeDayFilter);
+
   const sorted = [...filtered].sort((a, b) => b.id - a.id);
 
   const container = document.getElementById('log-container');
@@ -159,13 +534,15 @@ function renderLog() {
     return;
   }
 
+  // Group by date+exercise+dayType
   const grouped = {};
   sorted.forEach(e => {
-    const key = e.date + '|' + e.exercise;
-    if (!grouped[key]) grouped[key] = { date: e.date, exercise: e.exercise, sets: [] };
+    const key = e.date + '|' + e.exercise + '|' + (e.dayType || '');
+    if (!grouped[key]) grouped[key] = { date: e.date, exercise: e.exercise, dayType: e.dayType || null, sets: [] };
     grouped[key].sets.push(e);
   });
 
+  // Group exercise groups by date
   const byDate = {};
   Object.values(grouped).forEach(g => {
     if (!byDate[g.date]) byDate[g.date] = [];
@@ -175,48 +552,72 @@ function renderLog() {
   const dates = Object.keys(byDate).sort((a, b) => b.localeCompare(a));
 
   container.innerHTML = dates.map(date => {
-    const label = date === today ? 'Сьогодні' : new Date(date + 'T12:00:00').toLocaleDateString('uk-UA', {day:'numeric', month:'long', year:'numeric'});
+    const label = date === today
+      ? 'Сьогодні'
+      : new Date(date + 'T12:00:00').toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' });
+
     const groups = byDate[date];
+
+    // Unique day types for this date → header badges
+    const dayTypes = [...new Set(groups.map(g => g.dayType).filter(Boolean))];
+    const headerBadges = dayTypes.map(dt =>
+      `<span class="dbadge dbadge-${dt}">${DAY_DATA[dt].label} · ${DAY_DATA[dt].name}</span>`
+    ).join(' ');
+
+    const exerciseCards = groups.map(g => `
+      <div style="background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px 14px; margin-bottom: 8px;">
+        <p style="font-size: 14px; font-weight: 500; margin: 0 0 8px; color: var(--color-text-primary);">${g.exercise}</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+          ${g.sets.map(s => `
+            <div style="display: flex; align-items: center; gap: 6px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 4px 10px; font-size: 13px;">
+              <span style="color: var(--color-text-secondary);">п.${s.set}</span>
+              <span style="color: var(--color-text-primary); font-weight: 500;">${s.weight > 0 ? s.weight + ' кг' : 'без ваги'} × ${s.reps}</span>
+              <button onclick="deleteEntry(${s.id})" style="background: none; border: none; cursor: pointer; padding: 0; color: var(--color-text-tertiary); font-size: 14px; line-height: 1;" aria-label="Видалити">
+                <i class="ti ti-x"></i>
+              </button>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+
     return `
       <div style="margin-bottom: 1rem;">
-        <p style="font-size: 12px; color: var(--color-text-secondary); font-weight: 500; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.05em;">${label}</p>
-        ${groups.map(g => `
-          <div style="background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px 14px; margin-bottom: 8px;">
-            <p style="font-size: 14px; font-weight: 500; margin: 0 0 8px; color: var(--color-text-primary);">${g.exercise}</p>
-            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-              ${g.sets.map(s => `
-                <div style="display: flex; align-items: center; gap: 6px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 4px 10px; font-size: 13px;">
-                  <span style="color: var(--color-text-secondary);">п.${s.set}</span>
-                  <span style="color: var(--color-text-primary); font-weight: 500;">${s.weight > 0 ? s.weight + ' кг' : 'без ваги'} × ${s.reps}</span>
-                  <button onclick="deleteEntry(${s.id})" style="background: none; border: none; cursor: pointer; padding: 0; color: var(--color-text-tertiary); font-size: 14px; line-height: 1;" aria-label="Видалити">
-                    <i class="ti ti-x"></i>
-                  </button>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        `).join('')}
+        <div class="date-header">
+          <span class="date-label">${label}</span>
+          ${headerBadges}
+        </div>
+        ${exerciseCards}
       </div>
     `;
   }).join('');
 }
 
+// ── Filter clear ──────────────────────────────────────────────────
 function clearFilter() {
   document.getElementById('filter-date').value = '';
+  activeDayFilter = null;
+  document.getElementById('fpill-A').className = 'fpill';
+  document.getElementById('fpill-B').className = 'fpill';
+  document.getElementById('fpill-C').className = 'fpill';
   renderLog();
 }
 
+// ── Export ────────────────────────────────────────────────────────
 function exportData() {
   const filterDate = document.getElementById('filter-date').value;
   const filtered = filterDate ? entries.filter(e => e.date === filterDate) : entries;
   const sorted = [...filtered].sort((a, b) => a.date.localeCompare(b.date) || a.id - b.id);
 
-  let csv = 'Дата,Вправа,Підхід,Вага (кг),Повторень\n';
+  let csv = 'Дата,День,М\'язи,Вправа,Підхід,Вага (кг),Повторень\n';
   sorted.forEach(e => {
-    csv += `${e.date},${e.exercise},${e.set},${e.weight},${e.reps}\n`;
+    const dt = e.dayType ? DAY_DATA[e.dayType] : null;
+    const dayLabel = dt ? dt.label : '';
+    const muscles = dt ? dt.name : '';
+    csv += `${e.date},${dayLabel},${muscles},${e.exercise},${e.set},${e.weight},${e.reps}\n`;
   });
 
-  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
