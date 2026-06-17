@@ -1,0 +1,230 @@
+
+<h2 class="sr-only">Трекер тренувань — запис вправ, ваги та повторень</h2>
+
+<div style="padding: 1rem 0;">
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+  <div>
+    <p style="font-size: 22px; font-weight: 500; margin: 0; color: var(--color-text-primary);">Трекер тренувань</p>
+    <p style="font-size: 14px; color: var(--color-text-secondary); margin: 4px 0 0;" id="current-date"></p>
+  </div>
+  <button onclick="exportData()" style="font-size: 13px; padding: 6px 14px; display: flex; align-items: center; gap: 6px;">
+    <i class="ti ti-download" aria-hidden="true"></i> Експорт
+  </button>
+</div>
+
+<div style="background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
+  <p style="font-size: 14px; font-weight: 500; margin: 0 0 12px; color: var(--color-text-primary);">Додати вправу</p>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+    <div>
+      <label style="font-size: 12px; color: var(--color-text-secondary); display: block; margin-bottom: 4px;">Вправа</label>
+      <input type="text" id="exercise-input" placeholder="Жим лежачи..." list="exercise-list" style="width: 100%; box-sizing: border-box;" />
+      <datalist id="exercise-list">
+        <option value="Жим лежачи">
+        <option value="Присідання">
+        <option value="Станова тяга">
+        <option value="Жим гантелей">
+        <option value="Тяга верхнього блоку">
+        <option value="Підтягування">
+        <option value="Віджимання">
+        <option value="Тяга штанги в нахилі">
+        <option value="Армійський жим">
+        <option value="Розгинання ніг">
+        <option value="Згинання ніг">
+        <option value="Підйом на біцепс">
+        <option value="Розгинання на трицепс">
+        <option value="Планка">
+        <option value="Скручування">
+      </datalist>
+    </div>
+    <div>
+      <label style="font-size: 12px; color: var(--color-text-secondary); display: block; margin-bottom: 4px;">Дата</label>
+      <input type="date" id="date-input" style="width: 100%; box-sizing: border-box;" />
+    </div>
+  </div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+    <div>
+      <label style="font-size: 12px; color: var(--color-text-secondary); display: block; margin-bottom: 4px;">Підхід</label>
+      <input type="number" id="set-input" placeholder="1" min="1" max="20" style="width: 100%; box-sizing: border-box;" />
+    </div>
+    <div>
+      <label style="font-size: 12px; color: var(--color-text-secondary); display: block; margin-bottom: 4px;">Вага (кг)</label>
+      <input type="number" id="weight-input" placeholder="80" min="0" step="0.5" style="width: 100%; box-sizing: border-box;" />
+    </div>
+    <div>
+      <label style="font-size: 12px; color: var(--color-text-secondary); display: block; margin-bottom: 4px;">Повторень</label>
+      <input type="number" id="reps-input" placeholder="10" min="1" max="100" style="width: 100%; box-sizing: border-box;" />
+    </div>
+  </div>
+  <div style="display: flex; gap: 8px; align-items: center;">
+    <button onclick="addEntry()" style="flex: 1; font-size: 14px; padding: 8px;">
+      <i class="ti ti-plus" aria-hidden="true"></i> Додати підхід
+    </button>
+    <div id="feedback" style="font-size: 13px; color: var(--color-text-success); display: none;">
+      <i class="ti ti-check"></i> Додано!
+    </div>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.5rem;">
+  <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem; text-align: center;">
+    <p style="font-size: 12px; color: var(--color-text-secondary); margin: 0 0 4px;">Підходів сьогодні</p>
+    <p style="font-size: 24px; font-weight: 500; margin: 0;" id="stat-sets">0</p>
+  </div>
+  <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem; text-align: center;">
+    <p style="font-size: 12px; color: var(--color-text-secondary); margin: 0 0 4px;">Вправ сьогодні</p>
+    <p style="font-size: 24px; font-weight: 500; margin: 0;" id="stat-exercises">0</p>
+  </div>
+  <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem; text-align: center;">
+    <p style="font-size: 12px; color: var(--color-text-secondary); margin: 0 0 4px;">Тоннаж (кг)</p>
+    <p style="font-size: 24px; font-weight: 500; margin: 0;" id="stat-volume">0</p>
+  </div>
+</div>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+  <p style="font-size: 14px; font-weight: 500; margin: 0; color: var(--color-text-primary);">Журнал</p>
+  <div style="display: flex; gap: 8px; align-items: center;">
+    <input type="date" id="filter-date" style="font-size: 13px; padding: 4px 8px;" oninput="renderLog()" />
+    <button onclick="clearFilter()" style="font-size: 12px; padding: 4px 10px;">Всі</button>
+  </div>
+</div>
+
+<div id="log-container">
+  <p style="font-size: 14px; color: var(--color-text-secondary); text-align: center; padding: 2rem 0;">Ще немає записів. Додай перший підхід!</p>
+</div>
+
+</div>
+
+<script>
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('date-input').value = today;
+document.getElementById('current-date').textContent = new Date().toLocaleDateString('uk-UA', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+
+let entries = JSON.parse(localStorage.getItem('gym-tracker') || '[]');
+
+function saveData() {
+  localStorage.setItem('gym-tracker', JSON.stringify(entries));
+}
+
+function addEntry() {
+  const exercise = document.getElementById('exercise-input').value.trim();
+  const date = document.getElementById('date-input').value;
+  const set = parseInt(document.getElementById('set-input').value);
+  const weight = parseFloat(document.getElementById('weight-input').value);
+  const reps = parseInt(document.getElementById('reps-input').value);
+
+  if (!exercise || !date || !reps) {
+    alert('Заповни хоча б вправу, дату і кількість повторень');
+    return;
+  }
+
+  entries.push({ id: Date.now(), exercise, date, set: set || 1, weight: weight || 0, reps });
+  saveData();
+  renderLog();
+  updateStats();
+
+  document.getElementById('set-input').value = '';
+  document.getElementById('weight-input').value = '';
+  document.getElementById('reps-input').value = '';
+
+  const fb = document.getElementById('feedback');
+  fb.style.display = 'block';
+  setTimeout(() => fb.style.display = 'none', 1500);
+}
+
+function deleteEntry(id) {
+  entries = entries.filter(e => e.id !== id);
+  saveData();
+  renderLog();
+  updateStats();
+}
+
+function updateStats() {
+  const todayEntries = entries.filter(e => e.date === today);
+  document.getElementById('stat-sets').textContent = todayEntries.length;
+  const exs = new Set(todayEntries.map(e => e.exercise));
+  document.getElementById('stat-exercises').textContent = exs.size;
+  const vol = todayEntries.reduce((s, e) => s + (e.weight * e.reps), 0);
+  document.getElementById('stat-volume').textContent = Math.round(vol);
+}
+
+function renderLog() {
+  const filterDate = document.getElementById('filter-date').value;
+  const filtered = filterDate ? entries.filter(e => e.date === filterDate) : entries;
+  const sorted = [...filtered].sort((a, b) => b.id - a.id);
+
+  const container = document.getElementById('log-container');
+  if (!sorted.length) {
+    container.innerHTML = '<p style="font-size: 14px; color: var(--color-text-secondary); text-align: center; padding: 2rem 0;">Записів не знайдено</p>';
+    return;
+  }
+
+  const grouped = {};
+  sorted.forEach(e => {
+    const key = e.date + '|' + e.exercise;
+    if (!grouped[key]) grouped[key] = { date: e.date, exercise: e.exercise, sets: [] };
+    grouped[key].sets.push(e);
+  });
+
+  const byDate = {};
+  Object.values(grouped).forEach(g => {
+    if (!byDate[g.date]) byDate[g.date] = [];
+    byDate[g.date].push(g);
+  });
+
+  const dates = Object.keys(byDate).sort((a, b) => b.localeCompare(a));
+
+  container.innerHTML = dates.map(date => {
+    const label = date === today ? 'Сьогодні' : new Date(date + 'T12:00:00').toLocaleDateString('uk-UA', {day:'numeric', month:'long', year:'numeric'});
+    const groups = byDate[date];
+    return `
+      <div style="margin-bottom: 1rem;">
+        <p style="font-size: 12px; color: var(--color-text-secondary); font-weight: 500; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.05em;">${label}</p>
+        ${groups.map(g => `
+          <div style="background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px 14px; margin-bottom: 8px;">
+            <p style="font-size: 14px; font-weight: 500; margin: 0 0 8px; color: var(--color-text-primary);">${g.exercise}</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+              ${g.sets.map(s => `
+                <div style="display: flex; align-items: center; gap: 6px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 4px 10px; font-size: 13px;">
+                  <span style="color: var(--color-text-secondary);">п.${s.set}</span>
+                  <span style="color: var(--color-text-primary); font-weight: 500;">${s.weight > 0 ? s.weight + ' кг' : 'без ваги'} × ${s.reps}</span>
+                  <button onclick="deleteEntry(${s.id})" style="background: none; border: none; cursor: pointer; padding: 0; color: var(--color-text-tertiary); font-size: 14px; line-height: 1;" aria-label="Видалити">
+                    <i class="ti ti-x"></i>
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }).join('');
+}
+
+function clearFilter() {
+  document.getElementById('filter-date').value = '';
+  renderLog();
+}
+
+function exportData() {
+  const filterDate = document.getElementById('filter-date').value;
+  const filtered = filterDate ? entries.filter(e => e.date === filterDate) : entries;
+  const sorted = [...filtered].sort((a, b) => a.date.localeCompare(b.date) || a.id - b.id);
+
+  let csv = 'Дата,Вправа,Підхід,Вага (кг),Повторень\n';
+  sorted.forEach(e => {
+    csv += `${e.date},${e.exercise},${e.set},${e.weight},${e.reps}\n`;
+  });
+
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'тренування.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+renderLog();
+updateStats();
+</script>
