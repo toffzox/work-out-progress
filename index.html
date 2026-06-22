@@ -1,631 +1,689 @@
-
-<style>
-/* ═══════════════════════════════════════════════════════
-   WORKOUT DAY CARDS
-═══════════════════════════════════════════════════════ */
-.day-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-bottom: 1.25rem;
-}
-
-.day-card {
-  border: 1.5px solid var(--color-border-tertiary);
-  border-radius: 12px;
-  padding: 12px 8px 10px;
-  cursor: pointer;
-  background: var(--color-background-primary);
-  text-align: center;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  transition: border-color .18s ease, background .18s ease, transform .1s ease;
-}
-
-.day-card[data-day="A"] { --dc: #c94e30; }
-.day-card[data-day="B"] { --dc: #2d6fd4; }
-.day-card[data-day="C"] { --dc: #1e9e66; }
-
-.day-card:hover { opacity: .88; }
-.day-card:active { transform: scale(.96); }
-
-.day-card.on {
-  border-color: var(--dc);
-  background: color-mix(in srgb, var(--dc) 9%, var(--color-background-primary));
-}
-
-.dc-bar {
-  width: 24px; height: 3px;
-  border-radius: 2px;
-  background: var(--color-border-tertiary);
-  margin: 0 auto 8px;
-  transition: background .18s ease;
-}
-.day-card.on .dc-bar { background: var(--dc); }
-
-.dc-num {
-  font-size: 10px; font-weight: 700;
-  letter-spacing: .1em; text-transform: uppercase;
-  color: var(--color-text-secondary);
-  margin-bottom: 3px;
-  transition: color .18s ease;
-}
-.day-card.on .dc-num { color: var(--dc); }
-
-.dc-name {
-  font-size: 13px; font-weight: 600;
-  color: var(--color-text-primary);
-  line-height: 1.25;
-  margin-bottom: 2px;
-}
-
-.dc-sub {
-  font-size: 11px;
-  color: var(--color-text-secondary);
-  line-height: 1.3;
-}
-
-/* ═══════════════════════════════════════════════════════
-   QUICK EXERCISE CHIPS
-═══════════════════════════════════════════════════════ */
-#chips-wrap {
-  display: none;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 0.5px solid var(--color-border-tertiary);
-}
-#chips-wrap.visible { display: block; }
-
-.chips-title {
-  font-size: 11px;
-  color: var(--color-text-secondary);
-  margin-bottom: 7px;
-}
-
-.chips-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-}
-
-.xchip {
-  font-size: 12px;
-  padding: 4px 11px;
-  border-radius: 100px;
-  border: 1px solid var(--color-border-tertiary);
-  background: transparent;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  white-space: nowrap;
-  font-family: inherit;
-  transition: border-color .12s ease, color .12s ease, background .12s ease;
-}
-.xchip:hover {
-  border-color: var(--xc);
-  color: var(--xc);
-  background: color-mix(in srgb, var(--xc) 8%, transparent);
-}
-.xchip:active { transform: scale(.95); }
-
-/* ═══════════════════════════════════════════════════════
-   DAY BADGE IN LOG
-═══════════════════════════════════════════════════════ */
-.dbadge {
-  display: inline-block;
-  font-size: 9px; font-weight: 700;
-  letter-spacing: .07em; text-transform: uppercase;
-  padding: 2px 7px; border-radius: 4px;
-  vertical-align: middle;
-}
-.dbadge-A { background: rgba(201,78,48,.13); color: #c94e30; }
-.dbadge-B { background: rgba(45,111,212,.13); color: #2d6fd4; }
-.dbadge-C { background: rgba(30,158,102,.13); color: #1e9e66; }
-
-/* ═══════════════════════════════════════════════════════
-   FILTER PILLS
-═══════════════════════════════════════════════════════ */
-.filter-pills-row {
-  display: flex;
-  gap: 6px;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  margin-bottom: 10px;
-  padding-bottom: 2px;
-  scrollbar-width: none;
-}
-.filter-pills-row::-webkit-scrollbar { display: none; }
-
-.fpill {
-  font-size: 12px;
-  padding: 4px 11px;
-  border-radius: 100px;
-  border: 1px solid var(--color-border-tertiary);
-  background: transparent;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
-  font-family: inherit;
-  transition: border-color .12s ease, color .12s ease, background .12s ease;
-}
-.fpill.fa { border-color: #c94e30; color: #c94e30; background: rgba(201,78,48,.09); }
-.fpill.fb { border-color: #2d6fd4; color: #2d6fd4; background: rgba(45,111,212,.09); }
-.fpill.fc { border-color: #1e9e66; color: #1e9e66; background: rgba(30,158,102,.09); }
-
-/* ═══════════════════════════════════════════════════════
-   DATE GROUP HEADER
-═══════════════════════════════════════════════════════ */
-.date-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 8px;
-}
-.date-label {
-  font-size: 12px;
-  color: var(--color-text-secondary);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-/* ═══════════════════════════════════════════════════════
-   RESPONSIVE
-═══════════════════════════════════════════════════════ */
-@media (max-width: 400px) {
-  .dc-name { font-size: 12px; }
-  .dc-sub { font-size: 10px; }
-  .day-card { padding: 10px 4px 8px; }
-  .dc-bar { width: 20px; }
-}
-</style>
-
-<h2 class="sr-only">Трекер тренувань — запис вправ, ваги та повторень</h2>
-
-<div style="padding: 1rem 0;">
-
-<!-- Header -->
-<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
-  <div>
-    <p style="font-size: 22px; font-weight: 500; margin: 0; color: var(--color-text-primary);">Трекер тренувань</p>
-    <p style="font-size: 14px; color: var(--color-text-secondary); margin: 4px 0 0;" id="current-date"></p>
-  </div>
-  <button onclick="exportData()" style="font-size: 13px; padding: 6px 14px; display: flex; align-items: center; gap: 6px;">
-    <i class="ti ti-download" aria-hidden="true"></i> Експорт
-  </button>
-</div>
-
-<!-- Day Selector -->
-<p style="font-size: 12px; color: var(--color-text-secondary); margin: 0 0 8px; font-weight: 500;">Тип тренування</p>
-<div class="day-row" id="day-row">
-  <div class="day-card" data-day="A" onclick="selectDay('A')">
-    <div class="dc-bar"></div>
-    <div class="dc-num">День A</div>
-    <div class="dc-name">Груди</div>
-    <div class="dc-sub">Біцепс</div>
-  </div>
-  <div class="day-card" data-day="B" onclick="selectDay('B')">
-    <div class="dc-bar"></div>
-    <div class="dc-num">День B</div>
-    <div class="dc-name">Спина</div>
-    <div class="dc-sub">Тріцепс</div>
-  </div>
-  <div class="day-card" data-day="C" onclick="selectDay('C')">
-    <div class="dc-bar"></div>
-    <div class="dc-num">День C</div>
-    <div class="dc-name">Ноги</div>
-    <div class="dc-sub">Плечі</div>
-  </div>
-</div>
-
-<!-- Form Card -->
-<div style="background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
-  <p style="font-size: 14px; font-weight: 500; margin: 0 0 12px; color: var(--color-text-primary);">Додати вправу</p>
-
-  <!-- Quick exercise chips -->
-  <div id="chips-wrap">
-    <div class="chips-title">Швидкий вибір:</div>
-    <div class="chips-list" id="chips-list"></div>
-  </div>
-
-  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-    <div>
-      <label style="font-size: 12px; color: var(--color-text-secondary); display: block; margin-bottom: 4px;">Вправа</label>
-      <input type="text" id="exercise-input" placeholder="Жим лежачи..." list="exercise-list" style="width: 100%; box-sizing: border-box;" />
-      <datalist id="exercise-list">
-        <option value="Жим лежачи зі штангою">
-        <option value="Жим гантелей лежачи">
-        <option value="Жим під кутом вгору">
-        <option value="Жим гантелей під кутом">
-        <option value="Розведення гантелей лежачи">
-        <option value="Кроссовер на блоці">
-        <option value="Віджимання">
-        <option value="Підйом на біцепс зі штангою">
-        <option value="Підйом на біцепс з гантелями">
-        <option value="Молотки">
-        <option value="Сконцентровані згинання">
-        <option value="Підйом на блоці на біцепс">
-        <option value="Підтягування">
-        <option value="Тяга верхнього блоку">
-        <option value="Горизонтальна тяга">
-        <option value="Тяга штанги в нахилі">
-        <option value="Тяга гантелі в нахилі">
-        <option value="Тяга Т-грифа">
-        <option value="Гіперекстензія">
-        <option value="Розгинання на блоці">
-        <option value="Французький жим">
-        <option value="Відтискання на брусах">
-        <option value="Жим вузьким хватом">
-        <option value="Розгинання з гантеллю за головою">
-        <option value="Присідання зі штангою">
-        <option value="Жим ногами">
-        <option value="Розгинання ніг">
-        <option value="Згинання ніг">
-        <option value="Випади">
-        <option value="Ікри стоячи">
-        <option value="Ікри сидячи">
-        <option value="Армійський жим">
-        <option value="Жим гантелей сидячи">
-        <option value="Розведення гантелей стоячи">
-        <option value="Тяга до підборіддя">
-        <option value="Підйом гантелей в сторони">
-        <option value="Підйом гантелей перед собою">
-        <option value="Планка">
-        <option value="Скручування">
-      </datalist>
-    </div>
-    <div>
-      <label style="font-size: 12px; color: var(--color-text-secondary); display: block; margin-bottom: 4px;">Дата</label>
-      <input type="date" id="date-input" style="width: 100%; box-sizing: border-box;" />
-    </div>
-  </div>
-  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 12px;">
-    <div>
-      <label style="font-size: 12px; color: var(--color-text-secondary); display: block; margin-bottom: 4px;">Підхід</label>
-      <input type="number" id="set-input" placeholder="1" min="1" max="20" style="width: 100%; box-sizing: border-box;" />
-    </div>
-    <div>
-      <label style="font-size: 12px; color: var(--color-text-secondary); display: block; margin-bottom: 4px;">Вага (кг)</label>
-      <input type="number" id="weight-input" placeholder="80" min="0" step="0.5" style="width: 100%; box-sizing: border-box;" />
-    </div>
-    <div>
-      <label style="font-size: 12px; color: var(--color-text-secondary); display: block; margin-bottom: 4px;">Повторень</label>
-      <input type="number" id="reps-input" placeholder="10" min="1" max="100" style="width: 100%; box-sizing: border-box;" />
-    </div>
-  </div>
-  <div style="display: flex; gap: 8px; align-items: center;">
-    <button onclick="addEntry()" style="flex: 1; font-size: 14px; padding: 8px;">
-      <i class="ti ti-plus" aria-hidden="true"></i> Додати підхід
-    </button>
-    <div id="feedback" style="font-size: 13px; color: var(--color-text-success); display: none;">
-      <i class="ti ti-check"></i> Додано!
-    </div>
-  </div>
-</div>
-
-<!-- Stats -->
-<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.5rem;">
-  <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem; text-align: center;">
-    <p style="font-size: 12px; color: var(--color-text-secondary); margin: 0 0 4px;">Підходів сьогодні</p>
-    <p style="font-size: 24px; font-weight: 500; margin: 0;" id="stat-sets">0</p>
-  </div>
-  <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem; text-align: center;">
-    <p style="font-size: 12px; color: var(--color-text-secondary); margin: 0 0 4px;">Вправ сьогодні</p>
-    <p style="font-size: 24px; font-weight: 500; margin: 0;" id="stat-exercises">0</p>
-  </div>
-  <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem; text-align: center;">
-    <p style="font-size: 12px; color: var(--color-text-secondary); margin: 0 0 4px;">Тоннаж (кг)</p>
-    <p style="font-size: 24px; font-weight: 500; margin: 0;" id="stat-volume">0</p>
-  </div>
-</div>
-
-<!-- Log Header + Date filter -->
-<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-  <p style="font-size: 14px; font-weight: 500; margin: 0; color: var(--color-text-primary);">Журнал</p>
-  <div style="display: flex; gap: 8px; align-items: center;">
-    <input type="date" id="filter-date" style="font-size: 13px; padding: 4px 8px;" oninput="onDateFilter()" />
-    <button onclick="clearFilter()" style="font-size: 12px; padding: 4px 10px;">Всі</button>
-  </div>
-</div>
-
-<!-- Day filter pills (horizontal scroll on mobile) -->
-<div class="filter-pills-row">
-  <button class="fpill" id="fpill-A" onclick="toggleDayFilter('A')">День A · Груди + Біцепс</button>
-  <button class="fpill" id="fpill-B" onclick="toggleDayFilter('B')">День B · Спина + Тріцепс</button>
-  <button class="fpill" id="fpill-C" onclick="toggleDayFilter('C')">День C · Ноги + Плечі</button>
-</div>
-
-<div id="log-container">
-  <p style="font-size: 14px; color: var(--color-text-secondary); text-align: center; padding: 2rem 0;">Ще немає записів. Додай перший підхід!</p>
-</div>
-
-</div>
-
-<script>
-// ── Exercise data per day ────────────────────────────────────────
-const DAY_DATA = {
-  A: {
-    label: 'День A',
-    name: 'Груди + Біцепс',
-    color: '#c94e30',
-    exercises: [
-      'Жим лежачи зі штангою',
-      'Жим гантелей лежачи',
-      'Жим під кутом вгору',
-      'Жим гантелей під кутом',
-      'Розведення гантелей лежачи',
-      'Кроссовер на блоці',
-      'Підйом на біцепс зі штангою',
-      'Підйом на біцепс з гантелями',
-      'Молотки',
-      'Сконцентровані згинання',
-    ]
-  },
-  B: {
-    label: 'День B',
-    name: 'Спина + Тріцепс',
-    color: '#2d6fd4',
-    exercises: [
-      'Підтягування',
-      'Тяга верхнього блоку',
-      'Горизонтальна тяга',
-      'Тяга штанги в нахилі',
-      'Тяга гантелі в нахилі',
-      'Тяга Т-грифа',
-      'Гіперекстензія',
-      'Розгинання на блоці',
-      'Французький жим',
-      'Відтискання на брусах',
-      'Жим вузьким хватом',
-    ]
-  },
-  C: {
-    label: 'День C',
-    name: 'Ноги + Плечі',
-    color: '#1e9e66',
-    exercises: [
-      'Присідання зі штангою',
-      'Жим ногами',
-      'Розгинання ніг',
-      'Згинання ніг',
-      'Випади',
-      'Ікри стоячи',
-      'Армійський жим',
-      'Жим гантелей сидячи',
-      'Розведення гантелей стоячи',
-      'Тяга до підборіддя',
-      'Підйом гантелей в сторони',
-    ]
-  }
-};
-
-// ── Init ─────────────────────────────────────────────────────────
-const today = new Date().toISOString().split('T')[0];
-document.getElementById('date-input').value = today;
-document.getElementById('current-date').textContent = new Date().toLocaleDateString('uk-UA', {
-  weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-});
-
-let entries = JSON.parse(localStorage.getItem('gym-tracker') || '[]');
-let selectedDay = null;
-let activeDayFilter = null;
-
-// ── Day card selection ────────────────────────────────────────────
-function selectDay(day) {
-  selectedDay = (selectedDay === day) ? null : day;
-
-  document.querySelectorAll('.day-card').forEach(card => {
-    card.classList.toggle('on', card.dataset.day === selectedDay);
-  });
-
-  const chipsWrap = document.getElementById('chips-wrap');
-  const chipsList = document.getElementById('chips-list');
-
-  if (selectedDay) {
-    const d = DAY_DATA[selectedDay];
-    chipsWrap.classList.add('visible');
-    chipsList.innerHTML = d.exercises.map(ex =>
-      `<button class="xchip" style="--xc:${d.color}" onclick="fillExercise(this)"
-        data-name="${ex.replace(/"/g, '&quot;')}">${ex}</button>`
-    ).join('');
-  } else {
-    chipsWrap.classList.remove('visible');
-    chipsList.innerHTML = '';
-  }
-}
-
-function fillExercise(btn) {
-  document.getElementById('exercise-input').value = btn.dataset.name;
-  document.getElementById('set-input').focus();
-}
-
-// ── Day filter ────────────────────────────────────────────────────
-function toggleDayFilter(day) {
-  activeDayFilter = (activeDayFilter === day) ? null : day;
-  if (activeDayFilter) document.getElementById('filter-date').value = '';
-
-  document.getElementById('fpill-A').className = 'fpill' + (activeDayFilter === 'A' ? ' fa' : '');
-  document.getElementById('fpill-B').className = 'fpill' + (activeDayFilter === 'B' ? ' fb' : '');
-  document.getElementById('fpill-C').className = 'fpill' + (activeDayFilter === 'C' ? ' fc' : '');
-
-  renderLog();
-}
-
-function onDateFilter() {
-  if (document.getElementById('filter-date').value) {
-    // clear day filter when date is picked
-    activeDayFilter = null;
-    document.getElementById('fpill-A').className = 'fpill';
-    document.getElementById('fpill-B').className = 'fpill';
-    document.getElementById('fpill-C').className = 'fpill';
-  }
-  renderLog();
-}
-
-// ── Core CRUD ─────────────────────────────────────────────────────
-function saveData() {
-  localStorage.setItem('gym-tracker', JSON.stringify(entries));
-}
-
-function addEntry() {
-  const exercise = document.getElementById('exercise-input').value.trim();
-  const date = document.getElementById('date-input').value;
-  const set = parseInt(document.getElementById('set-input').value);
-  const weight = parseFloat(document.getElementById('weight-input').value);
-  const reps = parseInt(document.getElementById('reps-input').value);
-
-  if (!exercise || !date || !reps) {
-    alert('Заповни хоча б вправу, дату і кількість повторень');
-    return;
-  }
-
-  entries.push({
-    id: Date.now(),
-    exercise, date,
-    set: set || 1,
-    weight: weight || 0,
-    reps,
-    dayType: selectedDay
-  });
-  saveData();
-  renderLog();
-  updateStats();
-
-  document.getElementById('set-input').value = '';
-  document.getElementById('weight-input').value = '';
-  document.getElementById('reps-input').value = '';
-
-  const fb = document.getElementById('feedback');
-  fb.style.display = 'block';
-  setTimeout(() => fb.style.display = 'none', 1500);
-}
-
-function deleteEntry(id) {
-  entries = entries.filter(e => e.id !== id);
-  saveData();
-  renderLog();
-  updateStats();
-}
-
-function updateStats() {
-  const todayEntries = entries.filter(e => e.date === today);
-  document.getElementById('stat-sets').textContent = todayEntries.length;
-  const exs = new Set(todayEntries.map(e => e.exercise));
-  document.getElementById('stat-exercises').textContent = exs.size;
-  const vol = todayEntries.reduce((s, e) => s + (e.weight * e.reps), 0);
-  document.getElementById('stat-volume').textContent = Math.round(vol);
-}
-
-// ── Render log ────────────────────────────────────────────────────
-function renderLog() {
-  const filterDate = document.getElementById('filter-date').value;
-
-  let filtered = entries;
-  if (filterDate) filtered = filtered.filter(e => e.date === filterDate);
-  if (activeDayFilter) filtered = filtered.filter(e => e.dayType === activeDayFilter);
-
-  const sorted = [...filtered].sort((a, b) => b.id - a.id);
-
-  const container = document.getElementById('log-container');
-  if (!sorted.length) {
-    container.innerHTML = '<p style="font-size: 14px; color: var(--color-text-secondary); text-align: center; padding: 2rem 0;">Записів не знайдено</p>';
-    return;
-  }
-
-  // Group by date+exercise+dayType
-  const grouped = {};
-  sorted.forEach(e => {
-    const key = e.date + '|' + e.exercise + '|' + (e.dayType || '');
-    if (!grouped[key]) grouped[key] = { date: e.date, exercise: e.exercise, dayType: e.dayType || null, sets: [] };
-    grouped[key].sets.push(e);
-  });
-
-  // Group exercise groups by date
-  const byDate = {};
-  Object.values(grouped).forEach(g => {
-    if (!byDate[g.date]) byDate[g.date] = [];
-    byDate[g.date].push(g);
-  });
-
-  const dates = Object.keys(byDate).sort((a, b) => b.localeCompare(a));
-
-  container.innerHTML = dates.map(date => {
-    const label = date === today
-      ? 'Сьогодні'
-      : new Date(date + 'T12:00:00').toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' });
-
-    const groups = byDate[date];
-
-    // Unique day types for this date → header badges
-    const dayTypes = [...new Set(groups.map(g => g.dayType).filter(Boolean))];
-    const headerBadges = dayTypes.map(dt =>
-      `<span class="dbadge dbadge-${dt}">${DAY_DATA[dt].label} · ${DAY_DATA[dt].name}</span>`
-    ).join(' ');
-
-    const exerciseCards = groups.map(g => `
-      <div style="background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px 14px; margin-bottom: 8px;">
-        <p style="font-size: 14px; font-weight: 500; margin: 0 0 8px; color: var(--color-text-primary);">${g.exercise}</p>
-        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-          ${g.sets.map(s => `
-            <div style="display: flex; align-items: center; gap: 6px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 4px 10px; font-size: 13px;">
-              <span style="color: var(--color-text-secondary);">п.${s.set}</span>
-              <span style="color: var(--color-text-primary); font-weight: 500;">${s.weight > 0 ? s.weight + ' кг' : 'без ваги'} × ${s.reps}</span>
-              <button onclick="deleteEntry(${s.id})" style="background: none; border: none; cursor: pointer; padding: 0; color: var(--color-text-tertiary); font-size: 14px; line-height: 1;" aria-label="Видалити">
-                <i class="ti ti-x"></i>
-              </button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --border: #dee2e6;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            color: var(--gray);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .input-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+            color: var(--secondary);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a56d4;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #38b6e0;
+        }
+        
+        .btn-block {
+            width: 100%;
+        }
+        
+        .feedback {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
+            display: none;
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.success {
+            background-color: rgba(76, 201, 240, 0.2);
+            color: var(--secondary);
+            border: 1px solid var(--success);
+        }
+        
+        .exercises-section {
+            margin-top: 20px;
+        }
+        
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .xchip {
+            background: var(--primary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+        
+        .xchip:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+        
+        .log-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .date-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .date-label {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .dbadge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .dbadge-A {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+        
+        .dbadge-B {
+            background-color: rgba(58, 12, 163, 0.1);
+            color: var(--secondary);
+        }
+        
+        .dbadge-C {
+            background-color: rgba(76, 201, 240, 0.1);
+            color: var(--success);
+        }
+        
+        .exercise-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .exercise-title {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--dark);
+        }
+        
+        .sets-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .set-item {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .set-item .weight {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .set-item .reps {
+            font-weight: 500;
+        }
+        
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #e63946;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .delete-btn:hover {
+            transform: scale(1.2);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .export-btn {
+            background: white;
+            border: 1px solid var(--border);
+            color: var(--primary);
+            margin-top: 15px;
+        }
+        
+        .export-btn:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-dumbbell"></i> Gym Tracker</h1>
+            <p class="subtitle">Track your workouts and progress</p>
+        </header>
+        
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-value" id="workouts-count">0</div>
+                <div class="stat-label">Workouts</div>
             </div>
-          `).join('')}
+            <div class="stat-card">
+                <div class="stat-value" id="exercises-count">0</div>
+                <div class="stat-label">Exercises</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="sets-count">0</div>
+                <div class="stat-label">Sets Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="total-volume">0</div>
+                <div class="stat-label">Total Volume (kg)</div>
+            </div>
         </div>
-      </div>
-    `).join('');
-
-    return `
-      <div style="margin-bottom: 1rem;">
-        <div class="date-header">
-          <span class="date-label">${label}</span>
-          ${headerBadges}
+        
+        <div class="main-content">
+            <div class="input-section">
+                <h2 class="section-title">Add Workout</h2>
+                
+                <div class="form-group">
+                    <label for="workout-date"><i class="fas fa-calendar-day"></i> Date</label>
+                    <input type="date" id="workout-date">
+                </div>
+                
+                <div class="form-group">
+                    <label for="workout-type"><i class="fas fa-weight"></i> Workout Type</label>
+                    <select id="workout-type">
+                        <option value="strength">Strength Training</option>
+                        <option value="cardio">Cardio</option>
+                        <option value="flexibility">Flexibility</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="exercise-name"><i class="fas fa-dumbbell"></i> Exercise Name</label>
+                    <input type="text" id="exercise-name" placeholder="e.g. Bench Press, Squat...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="sets"><i class="fas fa-list-ol"></i> Sets</label>
+                    <input type="number" id="sets" min="1" value="1">
+                </div>
+                
+                <div class="form-group">
+                    <label for="reps"><i class="fas fa-sync-alt"></i> Reps per Set</label>
+                    <input type="number" id="reps" min="1" value="10">
+                </div>
+                
+                <div class="form-group">
+                    <label for="weight"><i class="fas fa-weight-hanging"></i> Weight (kg)</label>
+                    <input type="number" id="weight" min="0" step="0.5" value="0">
+                </div>
+                
+                <button id="add-workout-btn" class="btn btn-primary btn-block">
+                    <i class="fas fa-plus"></i> Add Workout
+                </button>
+                
+                <div id="feedback" class="feedback"></div>
+                
+                <div class="exercises-section">
+                    <h3 class="section-title">Quick Exercises</h3>
+                    <div class="chips-container" id="quick-exercises">
+                        <button class="xchip" data-exercise="Bench Press">Bench Press</button>
+                        <button class="xchip" data-exercise="Squat">Squat</button>
+                        <button class="xchip" data-exercise="Deadlift">Deadlift</button>
+                        <button class="xchip" data-exercise="Overhead Press">Overhead Press</button>
+                        <button class="xchip" data-exercise="Barbell Row">Barbell Row</button>
+                        <button class="xchip" data-exercise="Pull-ups">Pull-ups</button>
+                        <button class="xchip" data-exercise="Push-ups">Push-ups</button>
+                        <button class="xchip" data-exercise="Plank">Plank</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="log-section">
+                <h2 class="section-title">Workout Log</h2>
+                
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="filter-date"><i class="fas fa-filter"></i> Filter by Date</label>
+                        <input type="date" id="filter-date">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-type"><i class="fas fa-filter"></i> Filter by Type</label>
+                        <select id="filter-type">
+                            <option value="all">All Types</option>
+                            <option value="strength">Strength</option>
+                            <option value="cardio">Cardio</option>
+                            <option value="flexibility">Flexibility</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="workout-log">
+                    <div class="empty-state">
+                        <i class="fas fa-dumbbell"></i>
+                        <h3>No workouts recorded yet</h3>
+                        <p>Add your first workout to get started!</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        ${exerciseCards}
-      </div>
-    `;
-  }).join('');
-}
+        
+        <footer>
+            <p>Gym Tracker &copy; 2023 | Track your fitness journey</p>
+        </footer>
+    </div>
 
-// ── Filter clear ──────────────────────────────────────────────────
-function clearFilter() {
-  document.getElementById('filter-date').value = '';
-  activeDayFilter = null;
-  document.getElementById('fpill-A').className = 'fpill';
-  document.getElementById('fpill-B').className = 'fpill';
-  document.getElementById('fpill-C').className = 'fpill';
-  renderLog();
-}
-
-// ── Export ────────────────────────────────────────────────────────
-function exportData() {
-  const filterDate = document.getElementById('filter-date').value;
-  const filtered = filterDate ? entries.filter(e => e.date === filterDate) : entries;
-  const sorted = [...filtered].sort((a, b) => a.date.localeCompare(b.date) || a.id - b.id);
-
-  let csv = 'Дата,День,М\'язи,Вправа,Підхід,Вага (кг),Повторень\n';
-  sorted.forEach(e => {
-    const dt = e.dayType ? DAY_DATA[e.dayType] : null;
-    const dayLabel = dt ? dt.label : '';
-    const muscles = dt ? dt.name : '';
-    csv += `${e.date},${dayLabel},${muscles},${e.exercise},${e.set},${e.weight},${e.reps}\n`;
-  });
-
-  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'тренування.csv';
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-renderLog();
-updateStats();
-</script>
+    <script>
+        // Sample data for demonstration
+        let workouts = JSON.parse(localStorage.getItem('workouts')) || [
+            {
+                id: 1,
+                date: '2023-06-15',
+                type: 'strength',
+                exercise: 'Bench Press',
+                sets: 3,
+                reps: 8,
+                weight: 80
+            },
+            {
+                id: 2,
+                date: '2023-06-15',
+                type: 'strength',
+                exercise: 'Squat',
+                sets: 4,
+                reps: 10,
+                weight: 120
+            },
+            {
+                id: 3,
+                date: '2023-06-16',
+                type: 'cardio',
+                exercise: 'Running',
+                sets: 1,
+                reps: 30,
+                weight: 0
+            }
+        ];
+        
+        // DOM Elements
+        const workoutDateInput = document.getElementById('workout-date');
+        const workoutTypeSelect = document.getElementById('workout-type');
+        const exerciseNameInput = document.getElementById('exercise-name');
+        const setsInput = document.getElementById('sets');
+        const repsInput = document.getElementById('reps');
+        const weightInput = document.getElementById('weight');
+        const addWorkoutBtn = document.getElementById('add-workout-btn');
+        const feedbackDiv = document.getElementById('feedback');
+        const workoutLogDiv = document.getElementById('workout-log');
+        const quickExercises = document.querySelectorAll('.xchip');
+        const filterDateInput = document.getElementById('filter-date');
+        const filterTypeSelect = document.getElementById('filter-type');
+        
+        // Set today's date as default
+        const today = new Date().toISOString().split('T')[0];
+        workoutDateInput.value = today;
+        filterDateInput.value = today;
+        
+        // Initialize the app
+        function init() {
+            renderWorkoutLog();
+            updateStats();
+            
+            // Add event listeners
+            addWorkoutBtn.addEventListener('click', addWorkout);
+            
+            quickExercises.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    exerciseNameInput.value = chip.getAttribute('data-exercise');
+                    exerciseNameInput.focus();
+                });
+            });
+            
+            filterDateInput.addEventListener('change', renderWorkoutLog);
+            filterTypeSelect.addEventListener('change', renderWorkoutLog);
+        }
+        
+        // Add a new workout
+        function addWorkout() {
+            const date = workoutDateInput.value;
+            const type = workoutTypeSelect.value;
+            const exercise = exerciseNameInput.value.trim();
+            const sets = parseInt(setsInput.value) || 1;
+            const reps = parseInt(repsInput.value) || 1;
+            const weight = parseFloat(weightInput.value) || 0;
+            
+            if (!date || !exercise) {
+                showFeedback('Please fill in all required fields!', 'error');
+                return;
+            }
+            
+            // Create workout object
+            const workout = {
+                id: Date.now(),
+                date,
+                type,
+                exercise,
+                sets,
+                reps,
+                weight
+            };
+            
+            workouts.push(workout);
+            saveWorkouts();
+            renderWorkoutLog();
+            updateStats();
+            
+            // Reset form
+            exerciseNameInput.value = '';
+            setsInput.value = '1';
+            repsInput.value = '10';
+            weightInput.value = '0';
+            
+            showFeedback('Workout added successfully!', 'success');
+        }
+        
+        // Render workout log
+        function renderWorkoutLog() {
+            const filterDate = filterDateInput.value;
+            const filterType = filterTypeSelect.value;
+            
+            let filteredWorkouts = workouts;
+            
+            if (filterDate) {
+                filteredWorkouts = filteredWorkouts.filter(w => w.date === filterDate);
+            }
+            
+            if (filterType !== 'all') {
+                filteredWorkouts = filteredWorkouts.filter(w => w.type === filterType);
+            }
+            
+            if (filteredWorkouts.length === 0) {
+                workoutLogDiv.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>No workouts found</h3>
+                        <p>Try changing your filters</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            filteredWorkouts.forEach(workout => {
+                const date = new Date(workout.date).toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                const typeIcon = workout.type === 'strength' ? 'fa-dumbbell' : 
+                                workout.type === 'cardio' ? 'fa-running' : 
+                                workout.type === 'flexibility' ? 'fa-yoga' : 'fa-clipboard';
+                
+                html += `
+                    <div class="workout-item">
+                        <div class="workout-header">
+                            <i class="fas ${typeIcon}"></i>
+                            <strong>${workout.exercise}</strong>
+                            <span class="date">${date}</span>
+                        </div>
+                        <div class="workout-details">
+                            <span><i class="fas fa-list-ol"></i> Sets: ${workout.sets}</span>
+                            <span><i class="fas fa-sync-alt"></i> Reps: ${workout.reps}</span>
+                            <span><i class="fas fa-weight-hanging"></i> Weight: ${workout.weight} kg</span>
+                        </div>
+                    </div>
+                    <hr>
+                `;
+            });
+            
+            workoutLogDiv.innerHTML = html;
+        }
+        
+        // Update statistics
+        function updateStats() {
+            const totalWorkouts = workouts.length;
+            const totalExercises = [...new Set(workouts.map(w => w.exercise))].length;
+            const totalSets = workouts.reduce((sum, w) => sum + w.sets, 0);
+            const totalVolume = workouts.reduce((sum, w) => sum + (w.sets * w.reps * w.weight), 0);
+            
+            document.getElementById('workouts-count').textContent = totalWorkouts;
+            document.getElementById('exercises-count').textContent = totalExercises;
+            document.getElementById('sets-count').textContent = totalSets;
+            document.getElementById('total-volume').textContent = totalVolume;
+        }
+        
+        // Show feedback message
+        function showFeedback(message, type) {
+            feedbackDiv.textContent = message;
+            feedbackDiv.className = `feedback ${type}`;
+            
+            setTimeout(() => {
+                feedbackDiv.className = 'feedback';
+                feedbackDiv.textContent = '';
+            }, 3000);
+        }
+        
+        // Save workouts to localStorage
+        function saveWorkouts() {
+            localStorage.setItem('workouts', JSON.stringify(workouts));
+        }
+        
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
